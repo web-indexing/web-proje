@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  background: #000000;
+  overflow: hidden;
+  position: sticky;
+}
+
+.header {
+  background-color: #f1f1f1;
+  padding: 20px;
+}
+.topnav {
+  overflow: hidden;
+  background-color: #000000;
+}
+.topnav a {
+  float: left;
+  display: block;
+  color: #f2f2f2;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+}
+.topnav a:hover {
+  background-color: #ffffff;
+  color: black;
+}
+</style>
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+</head>
+<body>
+<div class="header">
+  <h1>YAZLAB-II PROJE-I</h1>
+  <h6>WEB INDEKSLEME PROJESI</h6>
+</div>
+<link>
+<div class="topnav">
+    <a href="default.html">ister1</a>
+    <a href="#">ister2</a>
+    <a href="#">ister3</a>
+    <a href="#">ister4</a>
+    <a href="#">ister5</a>
+</div>
+<form action="web_crawler.php" method="POST">
+  URL: <input type="text" name="URL"><br>
+  <input type="submit">
+</form>
+
+</body>
+</html>
