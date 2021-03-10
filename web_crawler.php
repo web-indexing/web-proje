@@ -1,4 +1,6 @@
 <?php
+// KODU ANLATAN VİDEO LİNK: https://www.youtube.com/watch?v=2RRSw7Ycv0c
+
 /*
  * howCode Web Crawler Tutorial Series Source Code
  * Copyright (C) 2016
@@ -19,7 +21,6 @@
  * https://howcode.org
  *
 */
-
 // This is our starting point. Change this to whatever URL you want.
 $start = $_POST["URL"];
 
