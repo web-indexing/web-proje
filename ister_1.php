@@ -1,7 +1,5 @@
 <?php
   
-  
-
   //Getting URL from form.
   if($_SERVER["REQUEST_METHOD"] == "POST"){
     $_GLOBAL["URL"] = test_input($_POST["URL"]);
@@ -34,7 +32,7 @@
    
       
     <?php
-     
+      
       //html_dom_parser kütüphanesini ekledik.
       //LİNK = "https://simplehtmldom.sourceforge.io/" 
       include('simple_html_dom.php');
@@ -54,6 +52,7 @@
       //kelimelerin frekansları hesaplanır.
       $wordArray = str_word_count($htmlPlainText,1);
       $wordFreqArray = array_count_values($wordArray);
+      arsort($wordFreqArray);
       
       //bulunan kelimelerin frekanslarını ekrana yazdır. (uzunluğu 3'den küçükse yazdırma)
       if($wordFreqArray != null){
