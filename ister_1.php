@@ -4,7 +4,7 @@
   if($_SERVER["REQUEST_METHOD"] == "POST"){
     $_GLOBAL["URL"] = test_input($_POST["URL"]);
   }
-
+    
   //Security function.
   function test_input($data){
     $data = trim($data);
@@ -32,7 +32,8 @@
    
       
     <?php
-      
+
+
       //html_dom_parser kütüphanesini ekledik.
       //LİNK = "https://simplehtmldom.sourceforge.io/" 
       include('simple_html_dom.php');
@@ -65,8 +66,22 @@
         </tr>";
       }
       
+      $stopwords = array("is","not","that","there","are","can","you","with","of","those","after","all","one");
+      
       foreach($wordFreqArray as $key => $value){
-        if(strlen($key) >= 3){
+
+        $inside=0;
+
+        // baktığımız kelime stopwords içinde mi değil mi kontrol ediyor
+        for($i=0;$i<=12; $i++){
+
+          if($key==$stopwords[$i]){
+            $inside=1;
+            echo $stopwords[$i]." ";
+          }
+        }
+        
+        if(strlen($key) >= 3 && $inside==0){
           echo "<tr>
                 <td>$key</td>
                 <td>$value</td>
