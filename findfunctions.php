@@ -12,7 +12,7 @@ function findFreq($url){
     //filtrele
     $htmlPlainText = preg_replace('/[^\p{L}\p{N}\s]/u', ' ', $htmlPlainText);
     $htmlPlainText = preg_replace('/[0-9]+/', '', $htmlPlainText);
-    $htmlPlainText = str_ireplace(array('nbsp','gt','lt','div','br'),' ',$htmlPlainText);
+    $htmlPlainText = str_ireplace(array('nbsp','gt','lt','div','br','quot','class'),' ',$htmlPlainText);
     $htmlPlainText = strtolower($htmlPlainText);
 
     //kelimelerin frekansları hesaplanır.
@@ -26,11 +26,11 @@ function findFreq($url){
   
 
   function printFreq($wordFreqArray){
-    echo "<h1> Keywords </h1>";
+    
     //bulunan kelimelerin frekanslarını ekrana yazdır. (uzunluğu 3'den küçükse yazdırma)
     if($wordFreqArray != null){
      echo $_GLOBAL["URL"];
-     echo "<br><br>
+     echo "
      <table>
      <tr>
        <th>Kelime</th>

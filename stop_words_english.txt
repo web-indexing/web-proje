@@ -812,3 +812,10 @@ words
 world
 youd
 youre
+s
+http
+https
+wasnt
+wont
+werent
+wouldnt
