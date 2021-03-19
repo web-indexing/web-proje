@@ -78,10 +78,8 @@
     $multiply = 1;
     foreach($tmpArray as $key => $value){
       $multiply *= $value;
-      echo "$multiply <br>";
     }
     
-    echo $sumFreq;
     return $multiply / $sumFreq;
   }
 ?>
