@@ -20,7 +20,7 @@
     fclose($stopwordsFile);
     
     //stopwordslerin bulunmadığı yeni bir array oluşturuyoruz.
-    $keywords;
+    $filteredWordFreqArray = array();
     foreach($wordFreqArray as $key => $value){
       $inside = 1;
       foreach($stopwords as $stopword){
@@ -32,12 +32,25 @@
        
       }
       if($inside){
-        $keywords[$key] = $value;;
+        $filteredWordFreqArray[$key] = $value;
       }
     
     }
     
-    //BURADA FREKANSA GORE VS KEYWORDLERİ BULUP DONDUREBİLİRİZ. şimdilik yukardaki kadar.
+    //ŞİMDİLİK EN YÜKSEK FREKANSA SAHİP 5 KELİMEYİ KEYWORD OLARAK SEÇİYORUZ
+    arsort($filteredWordFreqArray);
+    $keywords = array();
+    $numberOfKeywords = 5;
+    foreach($filteredWordFreqArray as $keyword => $frequency){
+      if($numberOfKeywords > 0){
+        $keywords[$keyword] = $frequency;
+        $numberOfKeywords--;
+      }else{
+        break;
+      }
+    }
+
+
 
     return $keywords;
   }
@@ -62,7 +75,9 @@
     <?php
     
     if(($keywords1 != null) && ($keywords2 != null)){
+      echo "<h1> Keywords </h1>";
       printFreq($keywords1);
+      echo "<h1> Keywords </h1>";
       printFreq($keywords2);
     }
     
