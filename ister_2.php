@@ -1,22 +1,33 @@
 <?php
   include('findfunctions.php');
+  $keywords1;
+  $keywords2;
   if($_SERVER["REQUEST_METHOD"] == "POST"){  
     $_GLOBAL["freqArray1"] = findFreq($_POST["URL1"]);
     $_GLOBAL["freqArray2"] = findFreq($_POST["URL2"]);
-    
+    $keywords1 = findKeyword($_GLOBAL["freqArray1"]);
+    $keywords2 = findKeyword($_GLOBAL["freqArray2"]);
   }
   
   function findKeyword($wordFreqArray){
-    $stopwords = array("is","not","that","there","are","can","you","with","of","those","after","all","one");
-    $keywords;
-    //stopwordslerin bulunmadığı yeni bir array oluşturuyoruz.
+    //stopwordsleri stopwords.txt dosyasından alarak dizi oluşturuyoruz.
+    $stopwords = array();
+    $stopwordsFile = fopen("stop_words_english.txt","r");
+    while(!feof($stopwordsFile)){
+
+      $stopwords[] = trim(fgets($stopwordsFile));
+    }
+    fclose($stopwordsFile);
     
+    //stopwordslerin bulunmadığı yeni bir array oluşturuyoruz.
+    $keywords;
     foreach($wordFreqArray as $key => $value){
       $inside = 1;
-      for($i = 0; $i<count($stopwords); $i++){
+      foreach($stopwords as $stopword){
         
-        if($key == $stopwords[$i]){
+        if(strcmp($key,$stopword) == 0){
           $inside = 0;
+          break;
         }
        
       }
@@ -49,8 +60,7 @@
     </form>
 
     <?php
-    $keywords1 = findKeyword($_GLOBAL["freqArray1"]);
-    $keywords2 = findKeyword($_GLOBAL["freqArray2"]);
+    
     if(($keywords1 != null) && ($keywords2 != null)){
       printFreq($keywords1);
       printFreq($keywords2);
