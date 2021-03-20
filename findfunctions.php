@@ -28,7 +28,7 @@ function findFreq($url){
     
     //bulunan kelimelerin frekanslarını ekrana yazdır. (uzunluğu 3'den küçükse yazdırma)
     if($wordFreqArray != null){
-     echo $_GLOBAL["URL"];
+     echo @$_GLOBAL["URL"];
      echo "
      <table>
      <tr>
