@@ -1,10 +1,8 @@
 <?php
   include("findFunctions.php");
   if($_SERVER["REQUEST_METHOD"] == "POST"){  
-    $URLS = $_POST["URLS"];
-    $URL = $_POST["URL"];
-    $url_array = explode("\n",$URLS);
-    comparisonAll($url_array, $URL);
+    $_GLOBAL["URLS"] = $_POST["URLS"];
+    $_GLOBAL["URL"] = $_POST["URL"];
     // newline'a göre url'leri ayırdık.
     //findChildUrls($url_array);
     
@@ -45,7 +43,7 @@
           continue;
         }
         
-        // If the link isn't already in our crawl array add it, otherwise ignore it.
+        
         if (!in_array($l, $this->already_crawled)) {
             $this->already_crawled[] = $l;
             $crawling[] = $l;
@@ -96,45 +94,69 @@
     }
     
   }
- 
+  function merge_keyword_arrays($global_keyword_array, $keyword_array){
+    foreach($global_keyword_array as $keyword1 => $frequency1){
+      foreach($keyword_array as $keyword2 => $frequency2){
+        if($keyword1 == $keyword2){
+          $new_value = $frequency1 + $frequency2;
+          $global_keyword_array[$keyword1] = $new_value;
+        }
+        else{
+          $global_keyword_array[$keyword2] = $frequency2;
+        }
+      }
+    }
+    return $global_keyword_array;
+  }
 
   function comparisonAll($URLS, $URL){
     //OLAY BURADA GEÇECEK DE NASIL GEÇECEK ALTTAKİ FONKSİYONLAR DA DEĞİŞİR BÜYÜK İHTİMALLE
     //ALTTAKİ FONKSİYON ŞİMDİLİK LİNKLERİ GÖSTERİYOR FİLTRELEYİP
     
-    //FREKANSLAR BULUNUR
+    //benzerliği bulunacak url'nin frekansı ve keywordleri bulunur.
     $wordFreqArray0 = findFreq($URL);
-    //matris yapisi seklinde olacak. 0.index => 1.url'nin frekans dizisi ... şeklinde
-    $wordFreqArray1 = array();
-    foreach($URLS as $url){
-      $wordFreqArray1[$url] = findFreq(trim($url));
-    }
-    
-    //KEYWORDLER BULUNUR
     $keywordArray0 = findKeyword($wordFreqArray0);
-    //matris yapisi şeklinde olacak. 0.index => 1.url'nin keywords dizisi ... şeklinde
-    $keywordArray1 = array();
-    foreach($wordFreqArray1 as $url => $wordFreqArray){
-      $keywordArray1[$url] = findKeyword($wordFreqArray);
+    
+    //web sitesi kümesindeki her sitenin alt siteleriyle birlikte ağaç yapısı çıkarılır ve ekrana yazdırılır.
+    //web sitesi kümesindeki her sitenin ve alt sitelerinin keywordleri gösterilir.
+    $global_keyword_array = array();
+    foreach($URLS as $url){
+      echo str_repeat("*",200);
+      $wordFreqArray1 = findFreq($url);
+      $global_keyword_array[$url] = findKeyword($wordFreqArray1);
+      $urlTree = new UrlTree($url,0);
+      echo "<h6>$url sitesinin url agaci</h6> \n";
+      UrlTree::printTree($urlTree->node,0);
+      $allURLS = $urlTree->already_crawled;
+      echo "<br>";
+      echo "<h6>$url sitesinin ve alt url baglantilarinin keywordleri</h6> \n";
+      echo "$url \n";
+      printFreq($global_keyword_array[$url]);
+      echo "\n";
+      foreach((array) $allURLS as $child_url){
+        echo "$child_url \n";
+        $wordFreqArray2 = findFreq($child_url);
+        $keywordArray2 = findKeyword($wordFreqArray2);
+        $global_keyword_array[$url] = merge_keyword_arrays($global_keyword_array[$url],$keywordArray2);
+        printFreq($keywordArray2);
+        echo "<br>";
+      }
+      $global_keyword_array[$url] = findKeyword($global_keyword_array[$url]);
+      arsort($global_keyword_array[$url]);
+
+    }
+  
+
+    echo "<p>Benzerlik siralamasi.<p> \n";
+    $global_comparison_array = array();
+    foreach($global_keyword_array as $url => $keyword_array){
+      $global_comparison_array[$url] = findComparison($keyword_array, $keywordArray0,$wordFreqArray0);
+    }
+    arsort($global_comparison_array);
+    foreach($global_comparison_array as $url => $comparison){
+      echo "$url ------> $comparison \n";
     }
 
-    //URL ağacı çıkarılır.
-    $urlTree = new UrlTree($URL,0);
-    UrlTree::printTree($urlTree->node,0);
-    
-    /*
-    $urlTrees = array();
-    foreach($URLS as $url){
-      $urlTrees[$url] = new UrlTree($url,0); 
-    }
-    
-    foreach($URLS as $url){
-      if($urlTrees[$url] != null){
-        UrlTree::printTree($urlTrees[$url],0);
-        echo "<br> <br> <br>";
-      }
-    }
-    */
 
   }
 
@@ -156,6 +178,15 @@
       <textarea name="URLS" rows="20" cols="200"></textarea><br>
       <input type="submit" style="margin-top: 20px;">
     </form>
+    <?php
+
+    if(($_GLOBAL['URLS'] != null) && ($_GLOBAL['URL'] != null)){
+      $url_array = explode("\n",$_GLOBAL["URLS"]);
+      comparisonAll($url_array, $URL);
+
+    }
+    
+    ?>
   </div>
 
 
