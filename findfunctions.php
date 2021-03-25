@@ -81,7 +81,7 @@ function findFreq($url){
     //ŞİMDİLİK EN YÜKSEK FREKANSA SAHİP 5 KELİMEYİ KEYWORD OLARAK SEÇİYORUZ
     arsort($filteredWordFreqArray);
     $keywords = array();
-    $numberOfKeywords = 10;
+    $numberOfKeywords = 5;
     foreach($filteredWordFreqArray as $keyword => $frequency){
       if($numberOfKeywords > 0){
         $keywords[$keyword] = $frequency;
@@ -90,14 +90,34 @@ function findFreq($url){
         break;
       }
     }
-
-
-
     return $keywords;
   }
 
   //iki site arasındaki benzerliği bulmamıza yarayan fonksiyon
-  function findComparison($wordFreqArray1, $wordFreqArray2, $wordFreqArray3){
+  function findComparison($keywords_1, $keywords_2, $wordFreqArray3){
+    $dot_product = 0;
+    $keyword1_norm = 0;
+    $keyword2_norm = 0;
+    $control = true;
+    foreach($keywords_1 as $key1 => $frequency1){
+      $keyword1_norm += ($frequency1)**2;
+      foreach($keywords_2 as $key2 => $frequency2){
+        if($control){
+          $keyword2_norm += ($frequency2)**2;
+        }
+        if($key1 == $key2){
+          $dot_product += ($frequency1 * $frequency2); 
+        }
+      }
+      if($control){
+        $control = false;
+      }
+    }
+    $keyword1_norm = ($keyword1_norm)**(1/2);
+    $keyword2_norm = ($keyword2_norm)**(1/2);
+    $cosine_similarity = $dot_product / ($keyword1_norm * $keyword2_norm );
+    return $cosine_similarity;
+    /*
     $tmpArray = array();
     
     foreach($wordFreqArray1 as $key1 => $value1){
@@ -119,6 +139,7 @@ function findFreq($url){
     }
     
     return $comparisonValue;
+    */
   }
-
+  
 ?>
