@@ -113,13 +113,12 @@ function findFreq($url){
     foreach($wordFreqArray3 as $key => $value){
       $sumFreq += $value;
     }
-
-    $multiply = 1;
+    $comparisonValue = 1/$sumFreq;
     foreach($tmpArray as $key => $value){
-      $multiply *= $value;
+      $comparisonValue *= $value;
     }
     
-    return $multiply / $sumFreq;
+    return $comparisonValue;
   }
 
 ?>
