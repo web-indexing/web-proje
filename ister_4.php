@@ -10,11 +10,17 @@
   class UrlTree{
     public $node;
     public $already_crawled;
-    function __construct($parentURL, $currentDepth){
+    public $comparison_array;
+    public $keyword_array0;
+    public $score;
+    function __construct($parentURL, $currentDepth,$keyword_array0){
       $this->already_crawled = array();
+      $this->comparison_array = array();
+      $this->keyword_array0 = $keyword_array0;
+      $this->already_crawled[] = $parentURL;
       $this->node = $this->recursive($parentURL,$currentDepth);
-      
     }
+
     function recursive($parentURL, $currentDepth){
       $node_array = array();
       $node_array["parent"] = $parentURL;
@@ -77,8 +83,8 @@
       $parent = $node["parent"];
       $child_array = $node["child"];
       
-      
-      echo str_repeat("&nbsp&nbsp",$currentDepth);
+      echo "($currentDepth) ";
+      echo str_repeat("&nbsp&nbsp&nbsp",$currentDepth);
       if(empty($child_array)){
         echo "- ";
       }else{
@@ -92,70 +98,91 @@
       }
       
     }
-    
-  }
-  function merge_keyword_arrays($global_keyword_array, $keyword_array){
-    foreach($global_keyword_array as $keyword1 => $frequency1){
-      foreach($keyword_array as $keyword2 => $frequency2){
-        if($keyword1 == $keyword2){
-          $new_value = $frequency1 + $frequency2;
-          $global_keyword_array[$keyword1] = $new_value;
+    function find_node($base_node, $node_url){
+      if($base_node["parent"] != $node_url){
+        foreach($base_node["child"] as $child){
+          $returnValue = $this->find_node($child,$node_url);
+          if($returnValue == null){
+            continue;
+          }else{
+            return $returnValue;
+          }
         }
-        else{
-          $global_keyword_array[$keyword2] = $frequency2;
-        }
+      }else{
+        return $base_node;
       }
     }
-    return $global_keyword_array;
+    function findComparison($base_node,$node_url, $global_keyword_array,$currentDepth){
+      $node;
+      if($base_node["parent"] != $node_url){
+        $node = $this->find_node($base_node,$node_url);
+        $this->score = 0.0;
+      }else{
+        $node = $base_node;
+      }
+      
+      $parent = $node["parent"];
+      $child_array = $node["child"];
+      
+      $score;
+      foreach($this->keyword_array0 as $keyword0 => $value0){
+        foreach($global_keyword_array[$parent] as $keyword1 => $value1){
+          if($keyword0 == $keyword1){
+            $score+=$value1;
+          }
+        }
+      }
+      $this->score += $score / (10)**$currentDepth;
+      foreach($child_array as $child_node){
+        $this->findComparison($child_node,$child_node["parent"],$global_keyword_array,$currentDepth+1);
+      }
+      
+      return $this->score;
+      
+    }
+    
   }
-
+  
   function comparisonAll($URLS, $URL){
-    //OLAY BURADA GEÇECEK DE NASIL GEÇECEK ALTTAKİ FONKSİYONLAR DA DEĞİŞİR BÜYÜK İHTİMALLE
-    //ALTTAKİ FONKSİYON ŞİMDİLİK LİNKLERİ GÖSTERİYOR FİLTRELEYİP
-    
     //benzerliği bulunacak url'nin frekansı ve keywordleri bulunur.
-    $wordFreqArray0 = findFreq($URL);
+    $wordFreqArray0 = findFreq(trim($URL));
     $keywordArray0 = findKeyword($wordFreqArray0);
-    
-    //web sitesi kümesindeki her sitenin alt siteleriyle birlikte ağaç yapısı çıkarılır ve ekrana yazdırılır.
-    //web sitesi kümesindeki her sitenin ve alt sitelerinin keywordleri gösterilir.
+
+    //bütün alt url'ler de dahil keywordlerin bulunduğu array
     $global_keyword_array = array();
+    //url'nin ve alt bağlantıların keywordleri bulunur. arraye eklenir ve ekranda çizdirilir.
+    //ağaç yapısı oluşturulur ve ekrana bastırılır.
+    //url'nin ve alt bağlantıların benzerlik skorları hesaplanır ve ekrana bastırılır.
     foreach($URLS as $url){
-      echo str_repeat("*",200);
-      $wordFreqArray1 = findFreq($url);
-      $global_keyword_array[$url] = findKeyword($wordFreqArray1);
-      $urlTree = new UrlTree($url,0);
+      $urlTree = new UrlTree($url,0,$keywordArray0);
+      $allURLS = $urlTree->already_crawled;
+      $comparison_array = array();
       echo "<h6>$url sitesinin url agaci</h6> \n";
       UrlTree::printTree($urlTree->node,0);
-      $allURLS = $urlTree->already_crawled;
+      //alt url'lerin keywordlerinin bulunması ve ekrana yazdırılma kısmı.
       echo "<br>";
       echo "<h6>$url sitesinin ve alt url baglantilarinin keywordleri</h6> \n";
-      echo "$url \n";
-      printFreq($global_keyword_array[$url]);
-      echo "\n";
       foreach((array) $allURLS as $child_url){
         echo "$child_url \n";
         $wordFreqArray2 = findFreq($child_url);
         $keywordArray2 = findKeyword($wordFreqArray2);
-        $global_keyword_array[$url] = merge_keyword_arrays($global_keyword_array[$url],$keywordArray2);
+        $global_keyword_array[$child_url] = $keywordArray2; 
         printFreq($keywordArray2);
         echo "<br>";
       }
-      $global_keyword_array[$url] = findKeyword($global_keyword_array[$url]);
-      arsort($global_keyword_array[$url]);
+      
+      foreach((array) $allURLS as $child_url){
+        $comparison_array[$child_url] = $urlTree->findComparison($urlTree->node,$child_url,$global_keyword_array,1);
+      }
+      
+      arsort($comparison_array);
+      echo "<h6>URL BENZERLIKLERI: </h6><br>";
+      foreach($comparison_array as $child_url => $score){
+        echo "$child_url => $score <br>";
+      }
+      
+    }
 
-    }
-  
-
-    echo "<p>Benzerlik siralamasi.<p> \n";
-    $global_comparison_array = array();
-    foreach($global_keyword_array as $url => $keyword_array){
-      $global_comparison_array[$url] = findComparison($keyword_array, $keywordArray0,$wordFreqArray0);
-    }
-    arsort($global_comparison_array);
-    foreach($global_comparison_array as $url => $comparison){
-      echo "$url ------> $comparison \n";
-    }
 
 
   }
@@ -182,7 +209,7 @@
 
     if(($_GLOBAL['URLS'] != null) && ($_GLOBAL['URL'] != null)){
       $url_array = explode("\n",$_GLOBAL["URLS"]);
-      comparisonAll($url_array, $URL);
+      comparisonAll($url_array, $_GLOBAL['URL']);
 
     }
     
