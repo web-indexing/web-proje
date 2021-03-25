@@ -40,8 +40,12 @@
       $crawling = array();
       $html = file_get_html(trim($url));
       $links = $html->find('a');
-      
+      $limit = 5;
+      $limit_count = 0;
       foreach($links as $link){
+        if($limit_count == $limit){
+          break;
+        }
         $l =  $link->href;
         
         $l = $this->linkFilter($l, $url);
@@ -53,7 +57,7 @@
         if (!in_array($l, $this->already_crawled)) {
             $this->already_crawled[] = $l;
             $crawling[] = $l;
-            
+            $limit_count++;
         }
       }
       return $crawling; 
