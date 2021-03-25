@@ -117,29 +117,7 @@ function findFreq($url){
     $keyword2_norm = ($keyword2_norm)**(1/2);
     $cosine_similarity = $dot_product / ($keyword1_norm * $keyword2_norm );
     return $cosine_similarity;
-    /*
-    $tmpArray = array();
     
-    foreach($wordFreqArray1 as $key1 => $value1){
-      foreach($wordFreqArray2 as $key2 => $value2){
-        if($key1 == $key2){
-          $tmpArray[$key1] = $value2;
-          break;
-        }
-      }
-    }
-
-    $sumFreq = 0;
-    foreach($wordFreqArray3 as $key => $value){
-      $sumFreq += $value;
-    }
-    $comparisonValue = 1/$sumFreq;
-    foreach($tmpArray as $key => $value){
-      $comparisonValue *= $value;
-    }
-    
-    return $comparisonValue;
-    */
   }
   
 ?>
