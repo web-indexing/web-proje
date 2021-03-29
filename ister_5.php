@@ -6,7 +6,8 @@
   }
   
   function getSynonyms($keyword_array, $freq_array, $url){ 
-    $apikey = "vU4dWvhyDTt9hcmyE0AS";
+    //http://thesaurus.altervista.org/service
+    $apikey = "BURAYA YUKARIDAKI SITEDEN API'KEY ALIP YAPISTIR";
     $language = "en_US"; 
     $endpoint = "http://thesaurus.altervista.org/thesaurus/v1";
     $synonyms_array = array();
