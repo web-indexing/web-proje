@@ -24,6 +24,14 @@
     grey grey grey grey grey grey grey 
     purple purple purple purple purple 
     blue blue blue blue blue blue blue 
+    gray gray gray
+    greyish greyish greyish
+    crimson crimson
+    greenish
+    quality quality 
+    group group group
+    reddish reddish 
+    ruddy ruddy ruddy
 
 
 </p>

@@ -9,7 +9,7 @@
     $_GLOBAL["freqArray2"] = findFreq($_POST["URL2"]);
     $keywords1 = findKeyword($_GLOBAL["freqArray1"]);
     $keywords2 = findKeyword($_GLOBAL["freqArray2"]);
-    $similarityScore = findComparison($keywords1, $keywords2, $_GLOBAL["freqArray2"]);
+    $similarityScore = findComparison($keywords1, $keywords2);
   }
   
   
@@ -32,8 +32,8 @@
     </form>
 
     <?php
-    //&& ($similarityScore != null)
-    if(($keywords1 != null) && ($keywords2 != null) ){
+    //
+    if(($keywords1 != null) && ($keywords2 != null) && ($similarityScore != null)){
       echo "<h1> Keywords </h1>";
       printFreq($keywords1);
       echo "<h1> Keywords </h1>";

@@ -3,10 +3,8 @@
   if($_SERVER["REQUEST_METHOD"] == "POST"){  
     $_GLOBAL["URLS"] = $_POST["URLS"];
     $_GLOBAL["URL"] = $_POST["URL"];
-    // newline'a göre url'leri ayırdık.
-    //findChildUrls($url_array);
-    
   }
+  
   class UrlTree{
     public $node;
     public $already_crawled;
@@ -64,7 +62,6 @@
     }
 
     function linkFilter($l, $url){
-      // Process all of the links we find. This is covered in part 2 and part 3 of the video series.
       if (substr($l, 0, 1) == "/" && substr($l, 0, 2) != "//") {
         return parse_url($url)["scheme"]."://".parse_url($url)["host"].$l;
       } else if (substr($l, 0, 2) == "//") {
@@ -87,7 +84,7 @@
       $parent = $node["parent"];
       $child_array = $node["child"];
       
-      echo "($currentDepth) ";
+      echo "(".($currentDepth+1).")";
       echo str_repeat("&nbsp&nbsp&nbsp",$currentDepth);
       if(empty($child_array)){
         echo "- ";
@@ -128,15 +125,9 @@
       $parent = $node["parent"];
       $child_array = $node["child"];
       
-      $score;
-      foreach($this->keyword_array0 as $keyword0 => $value0){
-        foreach($global_keyword_array[$parent] as $keyword1 => $value1){
-          if($keyword0 == $keyword1){
-            $score+=$value1;
-          }
-        }
-      }
-      $this->score += $score / (10)**$currentDepth;
+      $score = findcomparison($this->keyword_array0,$global_keyword_array[$parent]);
+      
+      $this->score += $score / $currentDepth;
       foreach($child_array as $child_node){
         $this->findComparison($child_node,$child_node["parent"],$global_keyword_array,$currentDepth+1);
       }
@@ -146,6 +137,7 @@
     }
     
   }
+
   
   function comparisonAll($URLS, $URL){
     //benzerliği bulunacak url'nin frekansı ve keywordleri bulunur.
@@ -191,7 +183,6 @@
 
   }
 
-  
 ?>
 
 <!DOCTYPE html>
