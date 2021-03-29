@@ -94,7 +94,7 @@ function findFreq($url){
   }
 
   //iki site arasındaki benzerliği bulmamıza yarayan fonksiyon
-  function findComparison($keywords_1, $keywords_2, $wordFreqArray3){
+  function findComparison($keywords_1, $keywords_2){
     $dot_product = 0;
     $keyword1_norm = 0;
     $keyword2_norm = 0;
